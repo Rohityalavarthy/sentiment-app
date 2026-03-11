@@ -27,7 +27,7 @@ const WEIGHTS = { "1 star": -1, "2 stars": -0.5, "3 stars": 0, "4 stars": 0.5, "
 //   Raise STRONG_THRESHOLD → harder to reach Very Positive / Very Negative
 //   Lower STRONG_THRESHOLD → easier to reach Very Positive / Very Negative
 
-const NEUTRAL_FLOOR    = 0.50; // raise to 0.55–0.60 to fix neutral false positives
+const NEUTRAL_FLOOR    = 0.40; // raise to 0.55–0.60 to fix neutral false positives
 const STRONG_THRESHOLD = 0.60; // top score needed to qualify as "Very" class
 
 export default async function handler(req, res) {
