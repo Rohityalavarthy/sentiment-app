@@ -11,7 +11,7 @@
 
 ## What it does
 
-Classifies any text into one of four sentiment classes using a 125M parameter BERT model. The HuggingFace API token lives entirely on the server — it is never exposed to the browser.
+Classifies any text into one of four sentiment classes using a 125M parameter BERT model. The HuggingFace API token lives entirely on the server - it is never exposed to the browser.
 
 | Class | Colour | Trigger |
 |---|---|---|
@@ -20,6 +20,8 @@ Classifies any text into one of four sentiment classes using a 125M parameter BE
 | 🟡 Neutral | `#E8C070` | Confidence below threshold, or 3-star prediction |
 | 🌿 Somewhat Positive | `#86EFAC` | Model confidence ≥ 58%, mildly positive |
 | 💚 Very Positive | `#4ADE80` | Model confidence ≥ 60%, strongly positive |
+
+The reason for varying parameters betwen positive and negative is that the base model used was observed to have a positive bias.
 
 ---
 
