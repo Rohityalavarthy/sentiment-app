@@ -25,7 +25,7 @@ const WEIGHTS = { "1 star": -1, "2 stars": -0.5, "3 stars": 0, "4 stars": 0.5, "
 //   NEUTRAL_FLOOR_NEG  → lower to pull more statements from Neutral → Negative
 //   STRONG_THRESHOLD   → confidence needed to reach "Very" class (both directions)
 const NEUTRAL_FLOOR_POS  = 0.58; // higher bar for positive (corrects model's positive bias)
-const NEUTRAL_FLOOR_NEG  = 0.38; // lower bar for negative (catches mild negatives)
+const NEUTRAL_FLOOR_NEG  = 0.30; // lower bar for negative (catches mild negatives)
 const STRONG_THRESHOLD   = 0.60; // needed for Very Positive / Very Negative
 
 export default async function handler(req, res) {
