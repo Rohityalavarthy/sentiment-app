@@ -1,6 +1,6 @@
 # SENTIMENT/ENGINE
 
-> BERT-powered 4-class sentiment analysis · Next.js · Vercel · WCAG AAA
+> BERT-powered 5-class sentiment analysis · Next.js · Vercel · WCAG AAA
 
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
 ![Vercel](https://img.shields.io/badge/Vercel-deployed-black?style=flat-square&logo=vercel)
