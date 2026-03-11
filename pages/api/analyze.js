@@ -12,23 +12,21 @@ const STAR_MAP = {
   "5 stars": "Very Positive",
 };
 
-// Weighted compound score: 1★=-1, 2★=-0.5, 3★=0, 4★=0.5, 5★=1
 const WEIGHTS = { "1 star": -1, "2 stars": -0.5, "3 stars": 0, "4 stars": 0.5, "5 stars": 1 };
 
 // ── Confidence thresholds ─────────────────────────────────────────────────────
-// The model is biased towards positive for neutral/factual statements.
-// These thresholds override the raw star label when confidence is too low,
-// collapsing uncertain predictions into Neutral.
+// Separate floors for positive vs negative to correct the model's positive bias.
+// The model needs MORE confidence to call something positive (corrects false positives
+// on neutral factual statements), but LESS confidence to call something negative
+// (so mild negatives like "somewhat disappointing" aren't swallowed into Neutral).
 //
 // HOW TO TUNE:
-//   Raise NEUTRAL_FLOOR   → more statements fall into Neutral (fixes false positives
-//                           like "I will move to Bangalore"). Try 0.55 or 0.60.
-//   Lower NEUTRAL_FLOOR   → fewer Neutrals, model opinion trusted more
-//   Raise STRONG_THRESHOLD → harder to reach Very Positive / Very Negative
-//   Lower STRONG_THRESHOLD → easier to reach Very Positive / Very Negative
-
-const NEUTRAL_FLOOR    = 0.40; // raise to 0.55–0.60 to fix neutral false positives
-const STRONG_THRESHOLD = 0.60; // top score needed to qualify as "Very" class
+//   NEUTRAL_FLOOR_POS  → raise to push more statements from Positive → Neutral
+//   NEUTRAL_FLOOR_NEG  → lower to pull more statements from Neutral → Negative
+//   STRONG_THRESHOLD   → confidence needed to reach "Very" class (both directions)
+const NEUTRAL_FLOOR_POS  = 0.58; // higher bar for positive (corrects model's positive bias)
+const NEUTRAL_FLOOR_NEG  = 0.38; // lower bar for negative (catches mild negatives)
+const STRONG_THRESHOLD   = 0.60; // needed for Very Positive / Very Negative
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -56,23 +54,21 @@ export default async function handler(req, res) {
       return res.status(hfRes.status).json({ error: `HuggingFace ${hfRes.status}: ${body}` });
     }
 
-    const data   = await hfRes.json();
-    const scores = Array.isArray(data[0]) ? data[0] : data;
-    const sorted = [...scores].sort((a, b) => b.score - a.score);
-    const top    = sorted[0];
+    const data     = await hfRes.json();
+    const scores   = Array.isArray(data[0]) ? data[0] : data;
+    const sorted   = [...scores].sort((a, b) => b.score - a.score);
+    const top      = sorted[0];
     const topScore = top.score;
-
-    // Apply threshold logic:
-    // 1. If the model isn't confident enough, force Neutral
-    // 2. If confident but not strongly, downgrade "Very" → "Somewhat"
-    let fourClass;
     const rawClass = STAR_MAP[top.label] || "Neutral";
 
-    if (topScore < NEUTRAL_FLOOR) {
-      // Not confident enough to assign any sentiment — call it Neutral
+    const isPositive = rawClass === "Somewhat Positive" || rawClass === "Very Positive";
+    const isNegative = rawClass === "Somewhat Negative" || rawClass === "Very Negative";
+    const floor      = isPositive ? NEUTRAL_FLOOR_POS : isNegative ? NEUTRAL_FLOOR_NEG : 0;
+
+    let fourClass;
+    if (topScore < floor) {
       fourClass = "Neutral";
     } else if (topScore < STRONG_THRESHOLD && (rawClass === "Very Positive" || rawClass === "Very Negative")) {
-      // Confident enough for a sentiment, but not strong enough for "Very"
       fourClass = rawClass === "Very Positive" ? "Somewhat Positive" : "Somewhat Negative";
     } else {
       fourClass = rawClass;
