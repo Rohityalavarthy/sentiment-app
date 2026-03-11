@@ -13,7 +13,7 @@ const EXAMPLES = [
   { label: "V.POS",  text: "This is absolutely phenomenal, best thing I've ever used!!" },
   { label: "POS",    text: "Pretty good overall, I'd recommend it to a friend." },
   { label: "NEU",    text: "It does what it says. Nothing more, nothing less." },
-  { label: "NEG",    text: "Somewhat disappointing, expected a lot more tbh." },
+  { label: "NEG",    text: "Dissapointed" },
   { label: "V.NEG",  text: "Holy sh*t what an absolute disaster, completely broken garbage." },
   { label: "TRICKY", text: "Not bad, but I wouldn't say it's great either. Bloody confusing." },
 ];
