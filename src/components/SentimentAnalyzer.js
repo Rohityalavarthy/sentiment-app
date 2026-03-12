@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-// ── Sentiment palette (WCAG AA+ on #0f1117) ───────────────────────────────────
 const CLASSES = {
   "Very Negative":     { color: "#FF6B6B", bg: "#1e0808", border: "#5a1414", glow: "#FF6B6B33", icon: "▼▼" },
   "Somewhat Negative": { color: "#FFB3B3", bg: "#180a0a", border: "#3d1818", glow: "#FFB3B322", icon: "▼"  },
@@ -18,7 +17,6 @@ const EXAMPLES = [
   { label: "TRICKY", text: "Not bad, but I wouldn't say it's great either. Bloody confusing." },
 ];
 
-// ── Animated bar ───────────────────────────────────────────────────────────────
 function AnimatedBar({ label, value, color, delay = 0 }) {
   const [width, setWidth] = useState(0);
   useEffect(() => {
@@ -27,15 +25,15 @@ function AnimatedBar({ label, value, color, delay = 0 }) {
   }, [value, delay]);
 
   return (
-    <div style={{ marginBottom: 14 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-        <span style={{ fontSize: 11, letterSpacing: 2, color: "#9090a8" }}>{label.toUpperCase()}</span>
-        <span style={{ fontSize: 12, color, fontWeight: 700 }}>{value}%</span>
+    <div style={{ marginBottom: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+        <span style={{ fontSize: 13, letterSpacing: 2, color: "#b0b0c8", fontWeight: 600 }}>{label.toUpperCase()}</span>
+        <span style={{ fontSize: 14, color, fontWeight: 700 }}>{value}%</span>
       </div>
-      <div style={{ height: 5, background: "#1e1e2a", borderRadius: 3, overflow: "hidden" }}>
+      <div style={{ height: 7, background: "#2a2a3e", borderRadius: 4, overflow: "hidden" }}>
         <div style={{
           height: "100%", width: `${width}%`, background: color,
-          borderRadius: 3, boxShadow: `0 0 8px ${color}88`,
+          borderRadius: 4, boxShadow: `0 0 10px ${color}99`,
           transition: "width 0.85s cubic-bezier(0.22,1,0.36,1)",
         }} />
       </div>
@@ -43,7 +41,6 @@ function AnimatedBar({ label, value, color, delay = 0 }) {
   );
 }
 
-// ── Gauge ──────────────────────────────────────────────────────────────────────
 function Gauge({ value, color }) {
   const [animVal, setAnimVal] = useState(0);
   const prevRef = useState(0);
@@ -77,11 +74,11 @@ function Gauge({ value, color }) {
   const needle = pt(curr, r - 8);
   const ticks  = [-1, -0.5, 0, 0.5, 1].map(v => {
     const a = sa + total * ((v + 1) / 2);
-    return { outer: pt(a, r + 4), inner: pt(a, r - 4), label: pt(a, r + 14), v };
+    return { outer: pt(a, r + 4), inner: pt(a, r - 4), label: pt(a, r + 16), v };
   });
 
   return (
-    <svg width={140} height={110} viewBox="0 0 140 110" style={{ overflow: "visible" }}>
+    <svg width={140} height={115} viewBox="0 0 140 115" style={{ overflow: "visible" }}>
       {[
         [sa,              sa + total*0.25, "#4a1010"],
         [sa + total*0.25, sa + total*0.40, "#351818"],
@@ -89,48 +86,47 @@ function Gauge({ value, color }) {
         [sa + total*0.60, sa + total*0.75, "#0f3520"],
         [sa + total*0.75, ea,              "#0a3518"],
       ].map(([f, t, c], i) => (
-        <path key={i} d={arc(f, t)} fill="none" stroke={c} strokeWidth={7}
+        <path key={i} d={arc(f, t)} fill="none" stroke={c} strokeWidth={8}
           strokeLinecap={i === 0 || i === 4 ? "round" : "butt"} />
       ))}
-      <path d={arc(sa + total * 0.5, curr)} fill="none" stroke={color} strokeWidth={5}
-        strokeLinecap="round" style={{ filter: `drop-shadow(0 0 4px ${color})` }} />
+      <path d={arc(sa + total * 0.5, curr)} fill="none" stroke={color} strokeWidth={6}
+        strokeLinecap="round" style={{ filter: `drop-shadow(0 0 5px ${color})` }} />
       {ticks.map(({ outer, inner, label, v }) => (
         <g key={v}>
-          <line x1={outer.x} y1={outer.y} x2={inner.x} y2={inner.y} stroke="#555" strokeWidth={1.5} />
+          <line x1={outer.x} y1={outer.y} x2={inner.x} y2={inner.y} stroke="#7070888" strokeWidth={2} />
           <text x={label.x} y={label.y} textAnchor="middle" dominantBaseline="middle"
-            fill="#7070888" style={{ fontSize: 7, fontFamily: "monospace" }}>
+            fill="#9090a8" style={{ fontSize: 9, fontFamily: "monospace", fontWeight: 600 }}>
             {v > 0 ? `+${v}` : v}
           </text>
         </g>
       ))}
       <line x1={cx} y1={cy} x2={needle.x} y2={needle.y}
-        stroke={color} strokeWidth={2} strokeLinecap="round"
+        stroke={color} strokeWidth={2.5} strokeLinecap="round"
         style={{ filter: `drop-shadow(0 0 3px ${color})` }} />
-      <circle cx={needle.x} cy={needle.y} r={5} fill={color}
+      <circle cx={needle.x} cy={needle.y} r={6} fill={color}
         style={{ filter: `drop-shadow(0 0 8px ${color})` }} />
-      <circle cx={cx} cy={cy} r={4} fill="#1a1a22" stroke={color} strokeWidth={1.5} />
-      <text x={cx} y={cy + 22} textAnchor="middle" fill={color}
-        style={{ fontSize: 15, fontFamily: "monospace", fontWeight: 700 }}>
+      <circle cx={cx} cy={cy} r={5} fill="#1a1a2e" stroke={color} strokeWidth={2} />
+      <text x={cx} y={cy + 24} textAnchor="middle" fill={color}
+        style={{ fontSize: 16, fontFamily: "monospace", fontWeight: 700 }}>
         {animVal >= 0 ? "+" : ""}{animVal.toFixed(3)}
       </text>
     </svg>
   );
 }
 
-// ── Class legend ───────────────────────────────────────────────────────────────
 function ClassLegend({ active }) {
   return (
-    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
       {Object.entries(CLASSES).map(([name, s]) => (
         <div key={name} style={{
-          padding: "5px 11px",
-          border: `1px solid ${name === active ? s.border : "#2a2a38"}`,
-          background: name === active ? s.bg : "transparent",
-          fontSize: 10, letterSpacing: 1,
-          color: name === active ? s.color : "#606078",
-          fontWeight: name === active ? 700 : 400,
+          padding: "6px 14px",
+          border: `1px solid ${name === active ? s.border : "#3a3a52"}`,
+          background: name === active ? s.bg : "#16161f",
+          fontSize: 11, letterSpacing: 1,
+          color: name === active ? s.color : "#8080a0",
+          fontWeight: name === active ? 700 : 500,
           transition: "all 0.3s",
-          boxShadow: name === active ? `0 0 12px ${s.glow}` : "none",
+          boxShadow: name === active ? `0 0 14px ${s.glow}` : "none",
         }}>
           {s.icon} {name.toUpperCase()}
         </div>
@@ -139,7 +135,6 @@ function ClassLegend({ active }) {
   );
 }
 
-// ── Main ───────────────────────────────────────────────────────────────────────
 export default function SentimentAnalyzer() {
   const [text, setText]         = useState("");
   const [result, setResult]     = useState(null);
@@ -187,41 +182,45 @@ export default function SentimentAnalyzer() {
     "Very Positive":     "#4ade80",
   };
 
-  // Section label style — reused throughout
-  const sectionLabel = { display: "block", fontSize: 10, letterSpacing: 4, color: "#7070888", marginBottom: 9, fontWeight: 500 };
+  const sectionLabel = {
+    display: "block", fontSize: 11, letterSpacing: 4,
+    color: "#a0a0c0", marginBottom: 10, fontWeight: 700,
+    textTransform: "uppercase",
+  };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0f1117" }}>
+    <div style={{ minHeight: "100vh", background: "#0a0a12" }}>
 
       {/* Header */}
       <header style={{
-        borderBottom: "1px solid #22222e",
-        padding: "16px 32px",
+        borderBottom: "2px solid #2a2a3e",
+        padding: "18px 36px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
+        background: "#0d0d18",
       }}>
         <div>
-          <p style={{ fontSize: 10, letterSpacing: 4, color: "#5555708", marginBottom: 4 }}>
+          <p style={{ fontSize: 11, letterSpacing: 5, color: "#7070908", marginBottom: 5, fontWeight: 600 }}>
             BERT · 5-CLASS · WCAG AA+
           </p>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: "#eeeef5", letterSpacing: 2 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#f0f0ff", letterSpacing: 3 }}>
             SENTIMENT<span style={{ color: "#7c6aff" }}>/</span>ENGINE
           </h1>
         </div>
-        <div style={{ display: "flex", gap: 7 }}>
+        <div style={{ display: "flex", gap: 8 }}>
           {Object.values(CLASSES).map((s, i) => (
             <div key={i} title={Object.keys(CLASSES)[i]} style={{
-              width: 9, height: 9, borderRadius: "50%",
-              background: s.color, boxShadow: `0 0 6px ${s.color}aa`,
+              width: 11, height: 11, borderRadius: "50%",
+              background: s.color, boxShadow: `0 0 7px ${s.color}bb`,
             }} />
           ))}
         </div>
       </header>
 
-      <main style={{ padding: "28px 32px", maxWidth: 780, margin: "0 auto" }}>
+      <main style={{ padding: "32px 36px", maxWidth: 800, margin: "0 auto" }}>
 
         {/* Input */}
-        <section style={{ marginBottom: 22 }}>
-          <label style={sectionLabel}>INPUT TEXT</label>
+        <section style={{ marginBottom: 26 }}>
+          <label style={sectionLabel}>Input Text</label>
           <textarea
             value={text}
             onChange={handleTextChange}
@@ -230,28 +229,29 @@ export default function SentimentAnalyzer() {
             rows={4}
             maxLength={1000}
             style={{
-              width: "100%", background: "#16161f", border: "1px solid #2a2a3a",
-              color: charWarn ? "#FFB3B3" : "#dddde8",
-              padding: "13px 15px", fontSize: 14, resize: "vertical",
-              outline: "none", lineHeight: 1.65, transition: "border-color 0.2s",
+              width: "100%", background: "#13131e", border: "2px solid #30304a",
+              color: charWarn ? "#FFB3B3" : "#eeeef8",
+              padding: "14px 16px", fontSize: 15, resize: "vertical",
+              outline: "none", lineHeight: 1.7, transition: "border-color 0.2s",
+              fontWeight: 400,
             }}
-            onFocus={e => e.target.style.borderColor = "#5a5aaa"}
-            onBlur={e => e.target.style.borderColor = "#2a2a3a"}
+            onFocus={e => e.target.style.borderColor = "#6a6acc"}
+            onBlur={e => e.target.style.borderColor = "#30304a"}
           />
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
-            <span style={{ fontSize: 10, color: charWarn ? "#FFB3B3" : "#606078" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
+            <span style={{ fontSize: 11, color: charWarn ? "#FFB3B3" : "#7878989", fontWeight: 500 }}>
               {text.length}/1000 CHARS · ⌘+ENTER TO ANALYZE
             </span>
             <button
               onClick={analyze}
               disabled={loading || !text.trim()}
               style={{
-                background: loading ? "#141420" : "#1a1a35",
-                border: `1px solid ${loading || !text.trim() ? "#2a2a4a" : "#5a5aaa"}`,
-                color: loading || !text.trim() ? "#4a4a6a" : "#aaaaff",
-                padding: "9px 28px", fontSize: 11, letterSpacing: 3,
+                background: loading ? "#141428" : "#1e1e40",
+                border: `2px solid ${loading || !text.trim() ? "#30304a" : "#6a6acc"}`,
+                color: loading || !text.trim() ? "#50507a" : "#c0c0ff",
+                padding: "10px 32px", fontSize: 12, letterSpacing: 3,
                 cursor: loading || !text.trim() ? "default" : "pointer",
-                transition: "all 0.2s",
+                fontWeight: 700, transition: "all 0.2s",
               }}
             >
               {loading ? "PROCESSING…" : "▶ ANALYZE"}
@@ -260,17 +260,17 @@ export default function SentimentAnalyzer() {
         </section>
 
         {/* Examples */}
-        <section style={{ marginBottom: 28 }}>
-          <p style={sectionLabel}>EXAMPLES</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        <section style={{ marginBottom: 32 }}>
+          <p style={sectionLabel}>Examples</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
             {EXAMPLES.map((ex, i) => (
               <button key={i} onClick={() => setText(ex.text)} style={{
-                background: "#16161f", border: "1px solid #2a2a3a",
-                color: "#8080a0", padding: "6px 13px", fontSize: 10,
-                cursor: "pointer", letterSpacing: 1, transition: "all 0.15s",
+                background: "#13131e", border: "1px solid #30304a",
+                color: "#9090b8", padding: "7px 15px", fontSize: 11,
+                cursor: "pointer", letterSpacing: 1, transition: "all 0.15s", fontWeight: 600,
               }}
-                onMouseEnter={e => { e.currentTarget.style.color = "#b0b0d0"; e.currentTarget.style.borderColor = "#5a5aaa"; }}
-                onMouseLeave={e => { e.currentTarget.style.color = "#8080a0"; e.currentTarget.style.borderColor = "#2a2a3a"; }}
+                onMouseEnter={e => { e.currentTarget.style.color = "#c8c8f0"; e.currentTarget.style.borderColor = "#6a6acc"; e.currentTarget.style.background = "#1a1a30"; }}
+                onMouseLeave={e => { e.currentTarget.style.color = "#9090b8"; e.currentTarget.style.borderColor = "#30304a"; e.currentTarget.style.background = "#13131e"; }}
               >
                 {ex.label}
               </button>
@@ -281,9 +281,9 @@ export default function SentimentAnalyzer() {
         {/* Error */}
         {error && (
           <div style={{
-            padding: "12px 16px", border: "1px solid #5a2020",
-            background: "#1a0c0c", color: "#FF8080",
-            fontSize: 12, marginBottom: 20, letterSpacing: 1,
+            padding: "13px 18px", border: "2px solid #6a2020",
+            background: "#1a0808", color: "#FF9090",
+            fontSize: 13, marginBottom: 22, letterSpacing: 1, fontWeight: 500,
           }}>
             ⚠ {error}
           </div>
@@ -292,33 +292,33 @@ export default function SentimentAnalyzer() {
         {/* Result */}
         {result && !loading && palette && (
           <section style={{
-            border: `1px solid ${palette.border}`,
+            border: `2px solid ${palette.border}`,
             background: palette.bg,
-            padding: 24, marginBottom: 24,
-            boxShadow: `0 0 40px ${palette.glow}`,
+            padding: 28, marginBottom: 28,
+            boxShadow: `0 0 50px ${palette.glow}`,
             transition: "all 0.4s",
           }}>
             {/* Classification + gauge */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 22, flexWrap: "wrap", gap: 16 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 26, flexWrap: "wrap", gap: 16 }}>
               <div>
-                <p style={{ ...sectionLabel, marginBottom: 10 }}>CLASSIFICATION</p>
+                <p style={{ ...sectionLabel, marginBottom: 12 }}>Classification</p>
                 <div style={{
-                  display: "inline-flex", alignItems: "center", gap: 10,
-                  padding: "10px 20px",
-                  border: `1px solid ${palette.border}`,
-                  background: "#0f1117",
-                  boxShadow: `0 0 16px ${palette.glow}`,
+                  display: "inline-flex", alignItems: "center", gap: 12,
+                  padding: "12px 24px",
+                  border: `2px solid ${palette.border}`,
+                  background: "#0a0a12",
+                  boxShadow: `0 0 20px ${palette.glow}`,
                 }}>
-                  <span style={{ color: palette.color, fontSize: 14 }}>{palette.icon}</span>
-                  <span style={{ color: palette.color, fontSize: 20, fontWeight: 700, letterSpacing: 3 }}>
+                  <span style={{ color: palette.color, fontSize: 18 }}>{palette.icon}</span>
+                  <span style={{ color: palette.color, fontSize: 22, fontWeight: 800, letterSpacing: 3 }}>
                     {cls.toUpperCase()}
                   </span>
                 </div>
-                <p style={{ fontSize: 11, color: "#9090a8", marginTop: 10, letterSpacing: 1 }}>
-                  BASE: <span style={{ color: "#c0c0d8" }}>{result.baseLabel.toUpperCase()}</span>
-                  {" · "}CONF: <span style={{ color: palette.color }}>{result.confidence}%</span>
+                <p style={{ fontSize: 13, color: "#b0b0c8", marginTop: 12, letterSpacing: 1, fontWeight: 500 }}>
+                  BASE: <span style={{ color: "#d8d8f0", fontWeight: 700 }}>{result.baseLabel.toUpperCase()}</span>
+                  {" · "}CONF: <span style={{ color: palette.color, fontWeight: 700 }}>{result.confidence}%</span>
                 </p>
-                <p style={{ fontSize: 10, color: "#7070888", marginTop: 4 }}>
+                <p style={{ fontSize: 11, color: "#8888a8", marginTop: 5, fontWeight: 500 }}>
                   {result.confidence >= 78 ? "≥78% — STRONG SIGNAL" : "<78% — MODERATE SIGNAL"}
                 </p>
               </div>
@@ -326,8 +326,8 @@ export default function SentimentAnalyzer() {
             </div>
 
             {/* Score bars */}
-            <div style={{ borderTop: "1px solid #22222e", paddingTop: 18, marginBottom: 18 }}>
-              <p style={sectionLabel}>MODEL SCORES</p>
+            <div style={{ borderTop: "2px solid #22223a", paddingTop: 20, marginBottom: 20 }}>
+              <p style={sectionLabel}>Model Scores</p>
               {result.breakdown.map((b, i) => (
                 <AnimatedBar key={b.label} label={b.label} value={b.score}
                   color={barColors[b.label] || "#888"} delay={i * 100} />
@@ -335,12 +335,12 @@ export default function SentimentAnalyzer() {
             </div>
 
             {/* Legend */}
-            <div style={{ borderTop: "1px solid #22222e", paddingTop: 16 }}>
-              <p style={sectionLabel}>SCALE</p>
+            <div style={{ borderTop: "2px solid #22223a", paddingTop: 18 }}>
+              <p style={sectionLabel}>Scale</p>
               <ClassLegend active={cls} />
             </div>
 
-            <p style={{ marginTop: 14, fontSize: 10, color: "#505068", letterSpacing: 1 }}>
+            <p style={{ marginTop: 16, fontSize: 11, color: "#6060808", letterSpacing: 1, fontWeight: 500 }}>
               MODEL: nlptown/bert-base-multilingual-uncased-sentiment
             </p>
           </section>
@@ -349,7 +349,7 @@ export default function SentimentAnalyzer() {
         {/* History */}
         {history.length > 0 && (
           <section>
-            <p style={sectionLabel}>ANALYSIS LOG</p>
+            <p style={sectionLabel}>Analysis Log</p>
             {history.map((h, i) => {
               const s = CLASSES[h.result.fourClass];
               return (
@@ -357,16 +357,16 @@ export default function SentimentAnalyzer() {
                   onClick={() => { setText(h.text.replace("…", "")); setResult(h.result); }}
                   style={{
                     display: "flex", justifyContent: "space-between", alignItems: "center",
-                    padding: "9px 14px", marginBottom: 4,
-                    background: i === 0 ? s.bg : "#13131c",
-                    border: `1px solid ${i === 0 ? s.border : "#22222e"}`,
+                    padding: "11px 16px", marginBottom: 5,
+                    background: i === 0 ? s.bg : "#111120",
+                    border: `1px solid ${i === 0 ? s.border : "#2a2a3e"}`,
                     cursor: "pointer", opacity: Math.max(1 - i * 0.1, 0.4),
                     transition: "opacity 0.2s",
                   }}>
-                  <span style={{ fontSize: 12, color: "#9090a8", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: 13, color: "#b0b0c8", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontWeight: 500 }}>
                     {h.text}
                   </span>
-                  <span style={{ fontSize: 11, color: s.color, marginLeft: 16, whiteSpace: "nowrap", letterSpacing: 1 }}>
+                  <span style={{ fontSize: 12, color: s.color, marginLeft: 16, whiteSpace: "nowrap", letterSpacing: 1, fontWeight: 700 }}>
                     {s.icon} {h.result.fourClass.toUpperCase()} · {h.result.confidence}%
                   </span>
                 </div>
