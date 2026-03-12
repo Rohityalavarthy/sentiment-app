@@ -15,11 +15,11 @@ Classifies any text into one of four sentiment classes using a 125M parameter BE
 
 | Class | Colour | Trigger |
 |---|---|---|
-| 🔴 Very Negative | `#FF6B6B` | Model confidence ≥ 60%, strongly negative |
+| 🔴 Very Negative | `#FF6B6B` | Model confidence ≥ 55%, strongly negative |
 | 🌸 Somewhat Negative | `#FFB3B3` | Model confidence ≥ 30%, mildly negative |
 | 🟡 Neutral | `#E8C070` | Confidence below threshold, or 3-star prediction |
-| 🌿 Somewhat Positive | `#86EFAC` | Model confidence ≥ 58%, mildly positive |
-| 💚 Very Positive | `#4ADE80` | Model confidence ≥ 60%, strongly positive |
+| 🌿 Somewhat Positive | `#86EFAC` | Model confidence ≥ 42%, mildly positive |
+| 💚 Very Positive | `#4ADE80` | Model confidence ≥ 55%, strongly positive |
 
 The reason for varying parameters betwen positive and negative is that the base model used was observed to have a positive bias.
 
@@ -68,9 +68,9 @@ The model was trained on product reviews and has a known positive bias — neutr
 
 ```js
 // pages/api/analyze.js
-const NEUTRAL_FLOOR_POS  = 0.58  // high bar for positive — corrects positive bias
+const NEUTRAL_FLOOR_POS  = 0.42  // high bar for positive — corrects positive bias
 const NEUTRAL_FLOOR_NEG  = 0.30  // low bar for negative — catches mild negatives
-const STRONG_THRESHOLD   = 0.60  // needed to reach "Very" class
+const STRONG_THRESHOLD   = 0.55  // needed to reach "Very" class
 ```
 
 **Logic applied after the model responds:**
